@@ -116,7 +116,7 @@ class backgroundSubtractionGMM:
                     if self.isBackgroundPixel(roundArray(curr_weights_array/curr_variance_array)):
                         self.per_frame_background_array[row_index, col_index, time_index] = 0
 
-a = backgroundSubtractionGMM(5, 5)
+a = backgroundSubtractionGMM(5, 30)
 a.readVideo('Jump.avi')
 a.fitMixtureOfGaussians()
 for i in range(a.num_frames):
