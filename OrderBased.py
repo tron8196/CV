@@ -29,9 +29,9 @@ class OrderBasedBackgroundSubtraction:
     image_window_regions_dict = {}
     detection_threshold = 0.03
 
-    def __init__(self, window_size, frame_read_per_second=10):
+    def __init__(self, window_size, frame_per_second=10):
         self.window_size = window_size
-        self.frame_read_per_second = frame_read_per_second
+        self.frame_read_per_second = frame_per_second
 
     def readVideo(self, video_file_name):
         video_capture = cv2.VideoCapture(video_file_name)
@@ -67,7 +67,6 @@ class OrderBasedBackgroundSubtraction:
                                                   i < self.n_rows and j < self.n_cols])
                 if curr_image_window_arr.size == 0:
                     break
-                # print(curr_image_window_arr.shape)
                 curr_image_window_region = ImageWindowRegion(window_id, curr_image_window_arr)
                 self.image_window_regions_dict[window_id] = curr_image_window_region
                 window_id = window_id + 1
@@ -97,9 +96,9 @@ class OrderBasedBackgroundSubtraction:
             if not self.image_window_regions_dict[window_id].isBackgroundRegion():
                 location_list = self.image_window_regions_dict[window_id].getImageWindowArr()
                 curr_image[tuple(np.transpose(location_list))] = 255
-        cv2.imwrite('./output/background' + str(curr_frame_index) + '.png', curr_image)
+        cv2.imwrite('./output/order_based_background_' + str(curr_frame_index) + '.png', curr_image)
 
-    def getBackground(self):
+    def detectBackground(self):
         self.setupImageWindowRegionList()
         for curr_frame_index in range(0, self.num_frames):
             for window_id in self.image_window_regions_dict.keys():
@@ -127,8 +126,11 @@ class OrderBasedBackgroundSubtraction:
                     self.image_window_regions_dict[window_id].setBackgroundFlag(True)
             self.writeCurrentBackgroundSubtractionImage(curr_frame_index)
 
-
+'''
+parameters
+window_size, this is the patch size in which local pair matching is done
+frame_per_second, DEFAULT = 10
+'''
 a = OrderBasedBackgroundSubtraction(10, 10)
 a.readVideo('Jump.avi')
-# a.setupImageWindowRegionList()
-a.getBackground()
+a.detectBackground()
