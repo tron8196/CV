@@ -15,15 +15,14 @@ class Descriptor:
 
     #Get Harris Corners for an image
     def getKeypoints(self, img):
-        H, W = img.shape
-        M = cv2.cornerEigenValsAndVecs(src=img, ksize=self.ksize, blockSize=self.ksize)
-        response = np.zeros(img.shape, dtype=np.float32)
-        for i in range(H):
-            for j in range(W):
-                lambda1 = M[i, j, 0]
-                lambda2 = M[i, j, 1]
-                response[i, j] = lambda1 * lambda2 - self.k * ((lambda2 + lambda1) ** 2)
-        return corner_peaks(response, threshold_rel=self.k, exclude_border=8)
+        Ix = cv2.Sobel(src=img, ddepth=cv2.CV_32F, dx=1, dy=0, ksize=self.ksize)
+        Iy = cv2.Sobel(src=img, ddepth=cv2.CV_32F, dx=0, dy=1, ksize=self.ksize)
+        Ixx = Ix * Iy
+        Iyy = Iy * Iy
+        Ixy = Ix * Iy
+        response = Ixx * Iyy - self.k * (Ixy ** 2)
+        args = corner_peaks(response, threshold_rel=self.k, exclude_border=8)
+        return args
 
 
     '''
@@ -67,9 +66,9 @@ class Descriptor:
     Given two images find source and target matching key-points
     '''
     def getSourceTargetMatches(self, src_img, dst_img):
-            src_keypoint = self.getKeypoints(src_img)
-            dst_keypoint = self.getKeypoints(dst_img)
-            src_descriptors = self.getKeyPointsDescriptor(src_img, src_keypoint)
-            dst_descriptors = self.getKeyPointsDescriptor(dst_img, dst_keypoint)
+            src_keypoint = self.getKeypoints(img=src_img)
+            dst_keypoint = self.getKeypoints(img=dst_img)
+            src_descriptors = self.getKeyPointsDescriptor(img=src_img, keypoints=src_keypoint)
+            dst_descriptors = self.getKeyPointsDescriptor(img=dst_img, keypoints=dst_keypoint)
             matches = self.match_descriptors(src_descriptors, dst_descriptors)
             return src_keypoint[matches[:, 0]], dst_keypoint[matches[:, 1]]
