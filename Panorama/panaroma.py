@@ -88,7 +88,11 @@ def testHomography(distance_threshold, random_index_list, source_features, targe
     predicted_target_homogeneous_coord = predicted_target_homogeneous_coord.T[:, :2]
     norm = np.linalg.norm(target_features - predicted_target_homogeneous_coord, axis=1)
     count = np.sum(norm < distance_threshold)
+<<<<<<< HEAD
     return count / total_test_points * 100 >= 70, count / total_test_points
+=======
+    return count / total_test_points * 100 >= 90, count / total_test_points
+>>>>>>> 42482561928de846aa3c810932b19fc343c58ca6
 
 
 
@@ -126,7 +130,11 @@ def getHomographyMatrix(source_image, target_image, MAX_ITERATIONS=100):
     max_accuracy = accuracy_list[args[0]]
     print('Accuracy ----> ' + str(100 * accuracy_list[args[0]]))
     print('Homography ----> ', H_list[args[0]])
+<<<<<<< HEAD
     if 100 * max_accuracy < 70:
+=======
+    if 100 * max_accuracy < 80:
+>>>>>>> 42482561928de846aa3c810932b19fc343c58ca6
         print('Accuracy very low ------> ' + str(max_accuracy))
         exit()
     return H_list[args[0]]
@@ -142,9 +150,15 @@ def getImageList(path):
 
 
 
+<<<<<<< HEAD
 def getImageHomogeneousCoord(img_shape, offset=0):
     H, W = img_shape
     return np.array([[curr_row - offset, curr_col, 1] for curr_row in range(H) for curr_col in range(W)]).astype(np.float32).T
+=======
+def getImageHomogeneousCoord(img_shape):
+    H, W = img_shape
+    return np.array([[curr_row, curr_col, 1] for curr_row in range(H) for curr_col in range(W)]).astype(np.float32).T
+>>>>>>> 42482561928de846aa3c810932b19fc343c58ca6
 
 def returnValidCoord(curr_img_arr, canvas_arr, img_shape):
     n_rows, n_cols = img_shape
@@ -154,8 +168,13 @@ def returnValidCoord(curr_img_arr, canvas_arr, img_shape):
     return curr_img_arr[correct_index].astype(np.int64), canvas_arr[correct_index].astype(np.int64)
 
 
+<<<<<<< HEAD
 def getSourceImgCoord(H, canvas_coord, canvas_coord_offset, img_shape):
     trg_img_coord = np.matmul(H, canvas_coord_offset)
+=======
+def getSourceImgCoord(H, canvas_coord, img_shape):
+    trg_img_coord = np.matmul(H, canvas_coord)
+>>>>>>> 42482561928de846aa3c810932b19fc343c58ca6
     trg_img_coord[2, :] = np.where(trg_img_coord[2, :] == 0, 1, trg_img_coord[2, :])
     trg_img_coord = trg_img_coord / trg_img_coord[2, :]
     curr_img_arr, canvas_arr = returnValidCoord(curr_img_arr=trg_img_coord.T[:, :2], canvas_arr=canvas_coord.T,
@@ -169,7 +188,11 @@ def getIntensityForCanvas(curr_H, curr_img, current_pixel_location):
     return intensity
 
 
+<<<<<<< HEAD
 f_name = 'shanghai'
+=======
+f_name = 'yard'
+>>>>>>> 42482561928de846aa3c810932b19fc343c58ca6
 path = r'./input/' + f_name
 imgs = getImageList(path)
 H, W = imgs[0].shape
@@ -183,6 +206,7 @@ H_arr = [np.eye(3)]
 
 for i in range(1, len(imgs)):
     H_arr.append(getHomographyMatrix(imgs[i - 1], imgs[i]))
+<<<<<<< HEAD
     H_arr[i] = np.matmul(H_arr[i], H_arr[i - 1])
 
 # for i in range(1, len(imgs)):
@@ -191,14 +215,27 @@ for i in range(1, len(imgs)):
 canvas_list = []
 canvas_coord = getImageHomogeneousCoord(canvas.shape)
 canvas_coord_offset = getImageHomogeneousCoord(canvas.shape, offset=300)
+=======
+
+for i in range(1, len(imgs)):
+    H_arr[i] = np.matmul(H_arr[i], H_arr[i - 1])
+
+canvas_list = []
+canvas_coord = getImageHomogeneousCoord(canvas.shape)
+
+>>>>>>> 42482561928de846aa3c810932b19fc343c58ca6
 for i in tqdm(range(len(imgs))):
     canvas_curr = np.zeros(canvas.shape)
     H_curr = H_arr[i]
     img_curr = imgs[i]
+<<<<<<< HEAD
     curr_img_coord, curr_img_canvas_coord = getSourceImgCoord(H=H_curr, canvas_coord=canvas_coord,
                                                               canvas_coord_offset=canvas_coord_offset,
                                                               img_shape=img_curr.shape)
 
+=======
+    curr_img_coord, curr_img_canvas_coord = getSourceImgCoord(H=H_curr, canvas_coord=canvas_coord, img_shape=img_curr.shape)
+>>>>>>> 42482561928de846aa3c810932b19fc343c58ca6
     canvas_curr[curr_img_canvas_coord] = img_curr[curr_img_coord]
     canvas_list.append(canvas_curr)
 canvas_3D = np.dstack(canvas_list)

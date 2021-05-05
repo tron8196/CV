@@ -15,6 +15,18 @@ class Descriptor:
 
     #Get Harris Corners for an image
     def getKeypoints(self, img):
+<<<<<<< HEAD
+=======
+        # H, W = img.shape
+        # M = cv2.cornerEigenValsAndVecs(src=img, ksize=self.ksize, blockSize=self.ksize)
+        # response = np.zeros(img.shape, dtype=np.float32)
+        # for i in range(H):
+        #     for j in range(W):
+        #         lambda1 = M[i, j, 0]
+        #         lambda2 = M[i, j, 1]
+        #         response[i, j] = lambda1 * lambda2 - self.k * ((lambda2 + lambda1) ** 2)
+        #
+>>>>>>> 42482561928de846aa3c810932b19fc343c58ca6
         Ix = cv2.Sobel(src=img, ddepth=cv2.CV_32F, dx=1, dy=0, ksize=self.ksize)
         Iy = cv2.Sobel(src=img, ddepth=cv2.CV_32F, dx=0, dy=1, ksize=self.ksize)
         Ixx = Ix * Iy
